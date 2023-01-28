@@ -1,0 +1,13 @@
+.wrapper {
+  width: 100%;
+  background: #AE4347;
+  height: 65px;
+}
+
+.container {
+  max-width: 1440px;
+  width: 100%;
+  display: flex;
+  margin: auto;
+  padding: 6px 30px;
+}

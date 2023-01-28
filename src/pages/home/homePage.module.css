@@ -1,0 +1,15 @@
+.wrapper {
+  max-width: 1440px;
+  margin: auto;
+  width: 100%;
+}
+
+.container {
+  padding: 24px 70px;
+}
+
+.collectionContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: 24px;
+}

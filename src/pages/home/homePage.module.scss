@@ -13,3 +13,10 @@
   grid-template-columns: repeat(5, 1fr);
   row-gap: 24px;
 }
+
+.paginationBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 48px 0;
+}

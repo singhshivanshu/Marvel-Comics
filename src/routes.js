@@ -24,7 +24,7 @@ const routes = [
     ),
   },
   {
-    path: "search/:searchID",
+    path: "search",
     element: (
       <QueryClientProvider client={queryClient}>
         <Search />

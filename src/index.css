@@ -11,3 +11,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.myComponent {
+  min-height: 100vh;
+  background: rgb(71 70 70);
+}

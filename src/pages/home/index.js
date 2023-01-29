@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { QueryClient } from "react-query";
 import useKeyToMD5 from "../../hooks/useKeyToMD5";
 import Header from "../../components/header";
-import styles from "./homePage.module.scss";
-import ComicCard from "../../components/comicCard";
+import ComicCard from "../../components/comic-card";
 import Pagination from "../../components/pagination";
-import { QueryClient } from "react-query";
+import fetchComics from "../../actions/fetchComics";
+import styles from "./home-page.module.scss";
+import CharacterCarousel from "../../components/character-carousel";
 
 const Home = () => {
   const [timeStamp, hash, publicKey] = useKeyToMD5();
@@ -17,14 +18,7 @@ const Home = () => {
   const { isLoading, data, error, isPreviousData } = useQuery({
     queryKey: ["comics", currentPage],
     queryFn: () =>
-      axios
-        .get(
-          `https://gateway.marvel.com:443/v1/public/comics?limit=${pageLimit}&offset=${
-            (currentPage - 1) * 20
-          }&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`
-        )
-        .then((res) => res.data)
-        .catch((error) => console.log(error)),
+      fetchComics(pageLimit, currentPage, timeStamp, hash, publicKey),
   });
 
   useEffect(() => {
@@ -32,24 +26,16 @@ const Home = () => {
       queryClient.prefetchQuery({
         queryKey: ["comics", currentPage],
         queryFn: () =>
-          axios
-            .get(
-              `https://gateway.marvel.com:443/v1/public/comics?limit=${pageLimit}&offset=${
-                (currentPage - 1) * 20
-              }&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`
-            )
-            .then((res) => res.data)
-            .catch((error) => console.log(error)),
+          fetchComics(pageLimit, currentPage, timeStamp, hash, publicKey),
       });
     }
-  }, [data, isPreviousData, currentPage, queryClient]);
+  }, [currentPage]);
 
-  console.log(data);
-  console.log(isLoading);
   return (
-    <div style={{ background: "rgb(71 70 70)" }}>
+    <div className="myComponent">
       <Header />
       <div className={styles.wrapper}>
+        <CharacterCarousel />
         <div className={styles.container}>
           <div className={styles.collectionContainer}>
             {data &&

@@ -1,0 +1,31 @@
+.wrapper {
+    max-width: 1380px;
+    margin: auto;
+    width: 100%;
+  }
+  
+  .container {
+    padding: 25px 98px;
+  }
+  
+  .collectionContainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px;
+  }
+  
+  .paginationBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 48px 0;
+  }
+
+  .searchHeading {
+    font-size: 24px;
+    color: #fff;
+
+    span {
+      color: gold;
+    }
+  }

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./comicCard.module.scss";
+import styles from "./comic-card.module.scss";
 
 const ComicCard = ({ title, imgSrc }) => {
   return (

@@ -16,7 +16,7 @@ const routes = [
     ),
   },
   {
-    path: "collection/:collectionID",
+    path: "collection",
     element: (
       <QueryClientProvider client={queryClient}>
         <Collection />

@@ -9,7 +9,6 @@ import ComicCard from "../../components/comic-card";
 import Pagination from "../../components/pagination";
 import fetchComics from "../../actions/fetchComics";
 import styles from "./search-page.module.scss";
-import CharacterCarousel from "../../components/character-carousel";
 
 const Search = () => {
   const [timeStamp, hash, publicKey] = useKeyToMD5();
@@ -62,7 +61,6 @@ const Search = () => {
     <div className="myComponent">
       <Header />
       <div className={styles.wrapper}>
-        <CharacterCarousel />
         <div className={styles.container}>
           <h2 className={styles.searchHeading}>
             Search - <span>"{parsedQuery.keywords}"</span>{" "}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { QueryClient } from "react-query";
+import { useQuery,QueryClient  } from "@tanstack/react-query";
 import useKeyToMD5 from "../../hooks/useKeyToMD5";
 import Header from "../../components/header";
 import ComicCard from "../../components/comic-card";
@@ -35,7 +34,11 @@ const Home = () => {
     <div className="myComponent">
       <Header />
       <div className={styles.wrapper}>
-        <CharacterCarousel />
+        <CharacterCarousel
+          timeStamp={timeStamp}
+          hash={hash}
+          publicKey={publicKey}
+        />
         <div className={styles.container}>
           <div className={styles.collectionContainer}>
             {data &&

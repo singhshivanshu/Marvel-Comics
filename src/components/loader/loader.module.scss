@@ -1,0 +1,16 @@
+.characterLoaderContainer {
+  width: 100%;
+  max-width: 1184px;
+  margin: auto;
+  margin-top: 24px;
+}
+
+.collectionLoaderContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
+}
+
+.cardLoader {
+  width: 216px;
+}

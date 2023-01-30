@@ -7,6 +7,8 @@ import Pagination from "../../components/pagination";
 import fetchComics from "../../actions/fetchComics";
 import styles from "./home-page.module.scss";
 import CharacterCarousel from "../../components/character-carousel";
+import CollectionLoader from "../../components/loader/collection-loader";
+import ErrorMessage from "../../components/error-handle";
 
 const Home = () => {
   const [timeStamp, hash, publicKey] = useKeyToMD5();
@@ -30,6 +32,17 @@ const Home = () => {
     }
   }, [currentPage]);
 
+  if (error)
+  return (
+    <div className="myComponent">
+      <Header />
+      <div className={styles.container}>
+          <ErrorMessage />
+      </div>
+    </div>
+  );
+
+
   return (
     <div className="myComponent">
       <Header />
@@ -41,6 +54,7 @@ const Home = () => {
         />
         <div className={styles.container}>
           <div className={styles.collectionContainer}>
+          {isLoading &&  <CollectionLoader />}
             {data &&
               data.data &&
               data.data.results.map((card) => {

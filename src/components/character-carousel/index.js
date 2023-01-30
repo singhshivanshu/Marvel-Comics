@@ -1,22 +1,70 @@
-import React, { useEffect, useMemo } from "react";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import { QueryClient, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import styles from "./carousel.module.scss";
 import fetchCharacters from "../../actions/fetchCharacter";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
+import { useInView } from "react-intersection-observer";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import CharacterLoader from "../loader/character-loader";
 
 const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = new QueryClient();
-  const [ref, page] = useInfiniteScroll(1);
+  // const [ref, page] = useInfiniteScroll(1);
+  const { ref, inView } = useInView();
   const limit = 20;
 
-  const { isLoading, data, error, isPreviousData } = useQuery({
-    queryKey: ["characters", page],
-    queryFn: () => fetchCharacters(limit, timeStamp, hash, publicKey, page),
-  });
+  // const { isLoading, data, error, isPreviousData } = useQuery({
+  //   queryKey: ["characters"],
+  //   queryFn: () => fetchCharacters(limit, timeStamp, hash, publicKey),
+  // });
+
+  // useEffect(() => {
+  //   if (!isPreviousData) {
+  //     queryClient.prefetchQuery({
+  //       queryKey: ["comics", page],
+  //       queryFn: () => fetchCharacters(limit, timeStamp, hash, publicKey, page),
+  //     });
+  //   }
+  // }, [page]);
+
+  const {
+    status,
+    isLoading,
+    data,
+    error,
+    isFetching,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
+  } = useInfiniteQuery(
+    ["projects"],
+    async ({ pageParam = 1 }) => {
+      console.log(pageParam);
+      return await fetchCharacters(
+        limit,
+        timeStamp,
+        hash,
+        publicKey,
+        pageParam
+      );
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    }
+  );
+
+  useEffect(() => {
+    if (inView) {
+      console.log("Page changed:");
+      fetchNextPage();
+    }
+  }, [inView]);
 
   const parsedQuery = useMemo(
     () => queryString.parse(location.search),
@@ -43,15 +91,19 @@ const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
       } else navigate("/");
     }
   };
+
   console.log(data);
-  console.log(page);
+
+  const resultData = data && data.pages && data.pages[0];
+
+  if (isLoading) return <CharacterLoader />;
   return (
     <div className={styles.wrapper}>
       <div className={styles.container} ref={ref}>
         <ul className={styles.characterList}>
-          {data &&
-            data.data &&
-            data.data.results.map((char, i) => {
+          {resultData &&
+            resultData.data &&
+            resultData.data.results.map((char, i) => {
               return (
                 <li
                   key={char.id + i}

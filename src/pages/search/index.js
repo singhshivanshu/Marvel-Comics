@@ -9,6 +9,8 @@ import ComicCard from "../../components/comic-card";
 import Pagination from "../../components/pagination";
 import fetchComics from "../../actions/fetchComics";
 import styles from "./search-page.module.scss";
+import CollectionLoader from "../../components/loader/collection-loader";
+import ErrorMessage from "../../components/error-handle";
 
 const Search = () => {
   const [timeStamp, hash, publicKey] = useKeyToMD5();
@@ -54,8 +56,15 @@ const Search = () => {
     }
   }, [currentPage, parsedQuery.keywords, hash, queryClient]);
 
-  console.log(data);
-  console.log(isLoading);
+  if (error)
+    return (
+      <div className="myComponent">
+        <Header />
+        <div className={styles.container}>
+            <ErrorMessage />
+        </div>
+      </div>
+    );
 
   return (
     <div className="myComponent">
@@ -66,6 +75,7 @@ const Search = () => {
             Search - <span>"{parsedQuery.keywords}"</span>{" "}
           </h2>
           <div className={styles.collectionContainer}>
+            {isLoading && <CollectionLoader />}
             {data &&
               data.data &&
               data.data.results.map((card) => {

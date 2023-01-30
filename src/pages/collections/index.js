@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { QueryClient } from "react-query";
+import queryString from "query-string";
+import { useLocation, useNavigate } from "react-router-dom";
 import useKeyToMD5 from "../../hooks/useKeyToMD5";
 import Header from "../../components/header";
 import ComicCard from "../../components/comic-card";
@@ -8,8 +10,8 @@ import Pagination from "../../components/pagination";
 import fetchComics from "../../actions/fetchComics";
 import styles from "./collections.module.scss";
 import CharacterCarousel from "../../components/character-carousel";
-import queryString from "query-string";
-import { useLocation } from "react-router-dom";
+import CollectionLoader from "../../components/loader/collection-loader";
+import ErrorMessage from "../../components/error-handle";
 
 const Collection = () => {
   const [timeStamp, hash, publicKey] = useKeyToMD5();
@@ -17,6 +19,7 @@ const Collection = () => {
   const pageLimit = 20;
   const queryClient = new QueryClient();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const parsedQuery = useMemo(
     () => queryString.parse(location.search),
@@ -60,6 +63,18 @@ const Collection = () => {
     }
   }, [currentPage, characterIds]);
 
+  if (error)
+  return (
+    <div className="myComponent">
+      <Header />
+      <div className={styles.container}>
+          <ErrorMessage />
+      </div>
+    </div>
+  );
+
+
+
   return (
     <div className="myComponent">
       <Header />
@@ -70,7 +85,16 @@ const Collection = () => {
           publicKey={publicKey}
         />
         <div className={styles.container}>
+          {filtersArray && filtersArray.length > 0 && (
+            <button
+              className={styles.clearFilterBtn}
+              onClick={() => navigate("/")}
+            >
+              Clear Filters: ({filtersArray.length})
+            </button>
+          )}
           <div className={styles.collectionContainer}>
+            {isLoading &&  <CollectionLoader />}
             {data &&
               data.data &&
               data.data.results.map((card) => {

@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { QueryClient, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import styles from "./carousel.module.scss";
-import fetchCharacters from "../../actions/fetchCharacter";
 import { useLocation, useNavigate } from "react-router-dom";
 import queryString from "query-string";
-import { useInView } from "react-intersection-observer";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import CharacterLoader from "../loader/character-loader";
 import axios from "axios";
@@ -12,9 +9,7 @@ import axios from "axios";
 const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const queryClient = new QueryClient();
-  const [ref, page] = useInfiniteScroll(1);
-  const [pg, setPg] = useState(1)
+  const {ref, page} = useInfiniteScroll();
   const limit = 20;
 
   const [data, setData] = useState([]);
@@ -35,7 +30,6 @@ const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
         }&ts=${timeStamp}&apikey=${publicKey}&hash=${hash}`
       )
       .then((res) => {
-        console.log(res);
         setData([...data, ...res.data.data.results]);
         setIsLoading(false);
       })
@@ -47,59 +41,6 @@ const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
   useEffect(() => {
     fetchCharacters(limit, timeStamp, hash, publicKey, page);
   }, [page]);
-
-  // const { isLoading, data, error, isPreviousData } = useQuery({
-  //   queryKey: ["characters"],
-  //   queryFn: () => fetchCharacters(limit, timeStamp, hash, publicKey),
-  // });
-
-  // useEffect(() => {
-  //   if (!isPreviousData) {
-  //     queryClient.prefetchQuery({
-  //       queryKey: ["comics", page],
-  //       queryFn: () => fetchCharacters(limit, timeStamp, hash, publicKey, page),
-  //     });
-  //   }
-  // }, [page]);
-
-  // const {
-  //   status,
-  //   isLoading,
-  //   data,
-  //   error,
-  //   isFetching,
-  //   isFetchingNextPage,
-  //   isFetchingPreviousPage,
-  //   fetchNextPage,
-  //   fetchPreviousPage,
-  //   hasNextPage,
-  //   hasPreviousPage,
-  // } = useInfiniteQuery(
-  //   ["projects"],
-  //   async ({ pageParam = 1 }) => {
-  //     console.log(pageParam);
-  //     return await fetchCharacters(
-  //       limit,
-  //       timeStamp,
-  //       hash,
-  //       publicKey,
-  //       pageParam
-  //     );
-  //   },
-  //   {
-  //     getNextPageParam: (lastPage) => {
-  //       console.log(lastPage);
-  //       return lastPage;
-  //     },
-  //   }
-  // );
-
-  // useEffect(() => {
-  //   if (inView) {
-  //     console.log("Page changed:");
-  //     fetchNextPage();
-  //   }
-  // }, [inView]);
 
   const parsedQuery = useMemo(
     () => queryString.parse(location.search),
@@ -127,29 +68,16 @@ const CharacterCarousel = ({ timeStamp, hash, publicKey }) => {
     }
   };
 
-  // console.log(data);
-  // console.log(page);
-
-  const onScrollHandler = (e) => {
-    if (
-      e.target.scrollWidth - e.target.scrollLeft - e.target.clientWidth === 0
-    ) {
-      setPg(pg + 1)
-    }
-  }
-
-  console.log(pg);
-
   if (isLoading && data.length === 0) return <CharacterLoader />;
   return (
     <div className={styles.wrapper}>
-      <div className={styles.container}>
-        <ul className={styles.characterList} ref={ref}>
+      <div className={styles.container} ref={ref}>
+        <ul className={styles.characterList} >
           {data && data.length > 0 &&
             data.map((char, i) => {
               return (
                 <li
-                  key={char.id + i}
+                  key={char.id}
                   className={styles.character}
                   onClick={() => handleSelectFilter(char.id + "")}
                 >

@@ -1,36 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const useInfiniteScroll = ({ currentPage = 1 }) => {
+const useInfiniteScroll = () => {
   const ref = useRef();
-  const [page, setPage] = useState(currentPage);
+  const [page, setPage] = useState(1);
 
-  const handleScroll = useCallback(
-    (e) => {
-      if (
-        e.target.scrollWidth - e.target.scrollLeft - e.target.clientWidth <
-        200
-      ) {
-        setPage(currentPage + 1);
-      }
-    },
-    [currentPage]
-  );
+  const handleScroll = (e) => {
+    if (
+      e.target.scrollWidth - e.target.scrollLeft - e.target.clientWidth === 0
+    ) {
+      setPage((prev) => {
+        return prev + 1;
+      });
+    }
+  };
 
   useEffect(() => {
     let targetElement;
-    console.log("Effect");
     if (ref && ref.current) {
       targetElement = ref.current;
-      targetElement.addEventListener("scroll", handleScroll);
+      targetElement.addEventListener("scroll", function (e) {
+        handleScroll(e);
+      });
     }
-    return () => {
-      if (targetElement) {
-        targetElement.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [ref, handleScroll]);
+  }, [ref.current]);
 
-  return [ref, page];
+  return { ref, page };
 };
 
 export default useInfiniteScroll;
